@@ -1,0 +1,90 @@
+-- g 商品表
+create table g
+(gid number,
+gname varchar2(20),
+cnt number
+);
+
+insert into g values (seq1.nextval,'牛',10);
+insert into g values (seq1.nextval,'马',8);
+insert into g values (seq1.nextval,'狼',7);
+insert into g values (seq1.nextval,'猫',6);
+
+
+-- o 订单表
+create table o (
+oid number,
+gid number,
+much number
+);
+
+
+
+监视：o表
+动作: insert
+触发: update g
+时间：after 
+
+
+create trigger 触发器名字
+触发时间
+监视的动作 on 表名[监视地点]
+begin
+
+    触发后的动作
+
+end;
+
+
+create trigger t1
+after insert on o
+begin
+    update g set cnt=cnt-new.much where gid=new.gid;
+end;
+
+create trigger t2
+after insert on o
+for each row
+begin
+    update g set cnt=cnt-:new.much where gid=:new.gid;
+end;
+
+
+--表级触发器
+create trigger t3
+after delete on goods
+begin
+    dbms_output.put_line('有人触发我');
+end;
+
+--行级触发器
+create trigger t4
+after delete on goods
+for each row
+begin
+    dbms_output.put_line('有人触发我');
+end;
+
+--before发生的触发器，有机会改sql语句的值
+create trigger t5
+before insert on o
+for each row
+
+declare
+tmp number;
+
+begin
+
+    select cnt into tmp from g where gid=:new.gid;
+
+    if :new.much > tmp then
+    
+        :new.much := tmp;
+    
+    end if;
+
+    update g set cnt=cnt-:new.much where gid=:new.gid;
+    
+end;
+
+
