@@ -1,3 +1,2 @@
 # Oracle_Study
-Oracle_study
-just do it!
+基本的Oracle使用方法
